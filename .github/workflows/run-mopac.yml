@@ -1,0 +1,27 @@
+name: Run MOPAC Calculation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-docker-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: |
+        docker build -t mopac .
+
+    - name: Run MOPAC Calculation
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/data mopac /data/formic_acid.mop
+        
+    - name: Print MOPAC Output File
+      run: |
+        cat ${{ github.workspace }}/formic_acid.out
